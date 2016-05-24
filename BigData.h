@@ -19,17 +19,19 @@ class BigData
 public:
 	BigData(INT64 value = UN_INIT)
 		:_value(value)
-	{}
+	{
+		INT64toString();
+	}
 	BigData(char* pData);
 	BigData operator+(const BigData& bigData);
 	BigData operator-(const BigData& bigData);
 	BigData operator*(const BigData& bigData);
 	BigData operator/(const BigData& bigData);
 public:
-	bool IsINT64Overflow() const;   //ÊÇ·ñÒç³ö
-	void INT64toString();           //½«Êı×ª»¯Îª×Ö·û´®
+	bool IsINT64Overflow() const;   //æ˜¯å¦æº¢å‡º
+	void INT64toString();           //å°†æ•°è½¬åŒ–ä¸ºå­—ç¬¦ä¸²
 	bool IsLeftBig(char* pLeft,int LSize,char* pRight,int RSize); //pLeft>pRight
-	int SubLoop(char* &pLeft,int &LSize,char* pRight,int RSize); //ÉÌ
+	int SubLoop(char* &pLeft,int &LSize,char* pRight,int RSize); //å•†
 	string ADD(string left,string right);
 	string SUB(string left,string right);
 	string MUL(string left,string right);
@@ -45,7 +47,7 @@ private:
 BigData::BigData(char* pData)
 {
 	assert(pData);
-	char Symbol = 0; //·ûºÅÎ»
+	char Symbol = 0; //ç¬¦å·ä½
 	if(pData[0] >= '0' && pData[0] <= '9')
 	{
 		Symbol = '+';
@@ -59,11 +61,11 @@ BigData::BigData(char* pData)
 	{
 		return;
 	}
-	while(*pData == 0)
+	while(*pData == '0')
 	{
 		pData++;
 	}
-	_strData.resize(strlen(pData)+1);// ¶à¿ª±ÙÒ»¸ö¿Õ¼ä´æ·ûºÅÎ»
+	_strData.resize(strlen(pData)+1);// å¤šå¼€è¾Ÿä¸€ä¸ªç©ºé—´å­˜ç¬¦å·ä½
 	_strData[0] = Symbol;
 	_value = 0;
 	int index = 1;
@@ -77,25 +79,21 @@ BigData::BigData(char* pData)
 	{
 		_value = 0 - _value;
 	}
-	if(isalpha(*pData))  //Èç¹ûÎª×Ö·û
-	{
-		return;
-	}
-	_strData.resize(index);//ÖØĞÂµ÷Õû¿Õ¼ä£¬·ÀÖ¹¿Õ¼äÀË·Ñ
+	_strData.resize(index);//é‡æ–°è°ƒæ•´ç©ºé—´ï¼Œé˜²æ­¢ç©ºé—´æµªè´¹
 }
 
-bool BigData::IsINT64Overflow() const  //ÊÇ·ñÒç³ö
+bool BigData::IsINT64Overflow() const  //æ˜¯å¦æº¢å‡º
 {
 	string tmp("+9223372036854775807");
 	if(_strData[0] == '-')
 	{
 		tmp = "-9223372036854775807";
 	}
-	if(_strData.size() < tmp.size())  //ÎŞÒç³ö
+	if(_strData.size() < tmp.size())  //æ— æº¢å‡º
 	{
 		return false;
 	}
-	else if(_strData.size() == tmp.size())  //ÎŞÒç³ö
+	else if(_strData.size() == tmp.size())  //æ— æº¢å‡º
 	{
 		char* c_strData = (char*)_strData.c_str();
 		char* ctmp = (char*)tmp.c_str();
@@ -108,7 +106,7 @@ bool BigData::IsINT64Overflow() const  //ÊÇ·ñÒç³ö
 	return true;
 }
 
-void BigData::INT64toString()//½«Êı×ª»¯Îª×Ö·û´®
+void BigData::INT64toString()//å°†æ•°è½¬åŒ–ä¸ºå­—ç¬¦ä¸²
 {
 	char Symbol = '+';
 	if(_value < 0)
@@ -120,19 +118,19 @@ void BigData::INT64toString()//½«Êı×ª»¯Îª×Ö·û´®
 		INT64 num = _value;
 		char ret = 0;
 		int index = 1;
-		//itoa(_value,ret,10); //½«ÕûÊı×ª»¯Îª×Ö·û´®string
-		_strData.append(1,Symbol);//¿¼ÂÇ·ûºÅÎ»
+		//itoa(_value,ret,10); //å°†æ•´æ•°è½¬åŒ–ä¸ºå­—ç¬¦ä¸²string
+		_strData.append(1,Symbol);//è€ƒè™‘ç¬¦å·ä½
 		while(num)
 		{
-			if(num < 0)//ÈôÖµÎª¸º
+			if(num < 0)//è‹¥å€¼ä¸ºè´Ÿ
 			{
 				num = 0 - num;
 			}
-			ret = num % 10 + '0';//È¡ÓàÊı
+			ret = num % 10 + '0';//å–ä½™æ•°
 			_strData.append(1,ret);
 			num = num/10;
 		}
-		//_strDataÖĞµÄ×Ö·û´®ĞèÒªÄæÖÃ
+		//_strDataä¸­çš„å­—ç¬¦ä¸²éœ€è¦é€†ç½®
 		char* left = (char*)_strData.c_str()+1;
 		char* right = left+_strData.size()-2;   
 		while(left < right)
@@ -147,7 +145,7 @@ void BigData::INT64toString()//½«Êı×ª»¯Îª×Ö·û´®
 	}
 }
 
-bool BigData::IsLeftBig(char* pLeft,int LSize,char* pRight,int RSize) //×ó´ó
+bool BigData::IsLeftBig(char* pLeft,int LSize,char* pRight,int RSize) //å·¦å¤§
 {
 	if((LSize < RSize)|| ((LSize == RSize) && (strncmp(pLeft,pRight,LSize) < 0)))
 	{
@@ -156,12 +154,12 @@ bool BigData::IsLeftBig(char* pLeft,int LSize,char* pRight,int RSize) //×ó´ó
 	return true;
 }
 
-int BigData::SubLoop(char* &pLeft,int &LSize,char* pRight,int RSize) //·µ»Ø¼õµÄ´ÎÊı¼´ÉÌ
+int BigData::SubLoop(char* &pLeft,int &LSize,char* pRight,int RSize) //è¿”å›å‡çš„æ¬¡æ•°å³å•†
 {
 	assert(pLeft);
 	assert(pRight);
-	int count  = 0; //¼õ·¨µÄ´ÎÊı
-	int cStep = 0;//½èÎ»
+	int count  = 0; //å‡æ³•çš„æ¬¡æ•°
+	int cStep = 0;//å€Ÿä½
 	while(1)
 	{
 		if(!IsLeftBig(pLeft,LSize,pRight,RSize))  //pLeft < pRight
@@ -175,14 +173,14 @@ int BigData::SubLoop(char* &pLeft,int &LSize,char* pRight,int RSize) //·µ»Ø¼õµÄ´
 				int ret = pLeft[LSize-i-1] - '0' - (pRight[RSize-i-1] - '0');
 				if(ret < 0)
 				{
-					pLeft[LSize-i-2] -= 1;   //½èÎ»
+					pLeft[LSize-i-2] -= 1;   //å€Ÿä½
 					ret = pLeft[LSize-i-1] - '0' + 10 - (pRight[RSize-i-1] - '0');
 				}
 				pLeft[LSize-i-1] = ret + '0';
 			}	
 		}
 		count++;
-		//È¥µôÇ°ÖÃ0   
+		//å»æ‰å‰ç½®0   
 		while(*pLeft == '0' && LSize > 0)
 		{
 			pLeft++;
@@ -193,14 +191,14 @@ int BigData::SubLoop(char* &pLeft,int &LSize,char* pRight,int RSize) //·µ»Ø¼õµÄ´
 }
 BigData BigData::operator +(const BigData &bigData)
 {
-	//Á½¸ö¶¼ÎŞÒç³ö£¬Ïà¼ÓÎŞÒç³ö
+	//ä¸¤ä¸ªéƒ½æ— æº¢å‡ºï¼Œç›¸åŠ æ— æº¢å‡º
 	if(!IsINT64Overflow() && !bigData.IsINT64Overflow())
 	{
-		if(_strData[0] != bigData._strData[0]) //ÒìºÅ
+		if(_strData[0] != bigData._strData[0]) //å¼‚å·
 		{
-			return BigData(_value+bigData._value);//Ïà¼Ó²»»á·¢ÉúÒç³ö
+			return BigData(_value+bigData._value);//ç›¸åŠ ä¸ä¼šå‘ç”Ÿæº¢å‡º
 		}
-		else    //Í¬ºÅ
+		else    //åŒå·
 		{
 			if((_strData[0] == '+' && (MAX_NUM - _value >= bigData._value) && (_value+bigData._value >= 0))
 				||(_strData[0] == '-' && (MIN_NUM + _value <= bigData._value)&&(_value+bigData._value <= 0)))
@@ -210,15 +208,15 @@ BigData BigData::operator +(const BigData &bigData)
 		}
 	}
 
-	//Ò»¸öÊıÒç³ö£¬Ïà¼ÓÒç³ö
-		if(_strData[0] == bigData._strData[0])//Í¬ºÅ
+	//ä¸€ä¸ªæ•°æº¢å‡ºï¼Œç›¸åŠ æº¢å‡º
+		if(_strData[0] == bigData._strData[0])//åŒå·
 		{
 		/*	string ret = ADD(_strData,bigData._strData);
 			return BigData((char*)ret.c_str());*/
 
 			return BigData((char*)ADD(_strData,bigData._strData).c_str());
 		}
-		else//ÒìºÅ
+		else//å¼‚å·
 		{
 			return BigData((char*)SUB(_strData,bigData._strData).c_str());
 		}
@@ -226,14 +224,14 @@ BigData BigData::operator +(const BigData &bigData)
 
 BigData BigData::operator-(const BigData& bigData)
 {
-	//Á½¸öÊı¶¼²»Òç³ö£¬Ïà¼õ²»Òç³ö
+	//ä¸¤ä¸ªæ•°éƒ½ä¸æº¢å‡ºï¼Œç›¸å‡ä¸æº¢å‡º
 	if(!IsINT64Overflow() && !bigData.IsINT64Overflow())
 	{
-		if(_strData[0] == bigData._strData[0])  //Í¬ºÅÏà¼õ²»Òç³ö
+		if(_strData[0] == bigData._strData[0])  //åŒå·ç›¸å‡ä¸æº¢å‡º
 		{
 			return BigData(_value - bigData._value);
 		}
-		else         //ÒìºÅÏà¼õ   10  3  -8      -10  -3  8
+		else         //å¼‚å·ç›¸å‡   10  3  -8      -10  -3  8
 		{
 			// ((_value > 0 && MIN_INT64 + _value <= bigData._value) ||       
                     // (_value < 0 && MAX_INT64 + _value >= bigData._value))
@@ -244,13 +242,13 @@ BigData BigData::operator-(const BigData& bigData)
 		}
 	}
 	
-	//ÓĞÒ»¸öÊıÒç³ö£¬Ïà¼õÒç³ö  
+	//æœ‰ä¸€ä¸ªæ•°æº¢å‡ºï¼Œç›¸å‡æº¢å‡º  
 	//"+11111111111111111111111111111"   "-2222222"
-	if(_strData[0] == bigData._strData[0]) //Í¬ºÅ---->¼õ
+	if(_strData[0] == bigData._strData[0]) //åŒå·---->å‡
 	{
 		return BigData((char*)SUB(_strData,bigData._strData).c_str());
 	}
-	else                                   //ÒìºÅ---->¼Ó
+	else                                   //å¼‚å·---->åŠ 
 	{
 		return BigData((char*)ADD(_strData,bigData._strData).c_str());
 	}
@@ -260,11 +258,11 @@ BigData BigData::operator*(const BigData& bigData)
 {
 	if(_value == 0 || bigData._value == 0)
 	{
-		return BigData((INT64)0); //×ª»¯Îªlong longĞÍ
+		return BigData((INT64)0); //è½¬åŒ–ä¸ºlong longå‹
 	}
 	if(!IsINT64Overflow() && !bigData.IsINT64Overflow())
 	{
-		// Í¬ºÅ ¡®+¡¯»ò¡®-¡¯ <= ×î´óÖµ---->ÎŞÒç³ö
+		// åŒå· â€˜+â€™æˆ–â€˜-â€™ <= æœ€å¤§å€¼---->æ— æº¢å‡º
 		if(_strData[0] == bigData._strData[0])
 		{
 			if(MAX_NUM/_value >= bigData._value)
@@ -272,14 +270,14 @@ BigData BigData::operator*(const BigData& bigData)
 				return BigData(_value*bigData._value);
 			}
 		}
-		else   //ÒìºÅ  >= ×îĞ¡Öµ
+		else   //å¼‚å·  >= æœ€å°å€¼
 		{
 			if(MIN_NUM/_value <= bigData._value)
 			{
 				return BigData(_value*bigData._value);
 			}
 		}	
-	}//ÓĞÒ»¸öÊıÒç³ö£¬Ïà³ËÒç³ö
+	}//æœ‰ä¸€ä¸ªæ•°æº¢å‡ºï¼Œç›¸ä¹˜æº¢å‡º
 	else
 	{
 		return BigData((char*)MUL(_strData,bigData._strData).c_str());
@@ -288,23 +286,23 @@ BigData BigData::operator*(const BigData& bigData)
 
 BigData BigData::operator/(const BigData& bigData)
 {
-	if(bigData._value == 0)//³ıÊıÎª0
+	if(bigData._value == 0)//é™¤æ•°ä¸º0
 	{
 		assert(false);
 		//return BigData((INT64)0);
 	}
-	//Á½¸öÊı¶¼Ã»ÓĞÒç³ö
+	//ä¸¤ä¸ªæ•°éƒ½æ²¡æœ‰æº¢å‡º
 	if(!IsINT64Overflow() && !bigData.IsINT64Overflow())
 	{
-		if(_value == 0) //±»³ıÊıÎª0
+		if(_value == 0) //è¢«é™¤æ•°ä¸º0
 		{
 			return BigData((INT64)0);
 		}
 		return BigData(_value/bigData._value);
 	}
 	
-	//ÓĞÒ»¸öÒç³ö
-	//ÌØÊâÇé¿ö
+	//æœ‰ä¸€ä¸ªæº¢å‡º
+	//ç‰¹æ®Šæƒ…å†µ
 	//left < right   2
 	char* LStr = (char*)_strData.c_str();
 	char* RStr = (char*)bigData._strData.c_str();
@@ -313,7 +311,7 @@ BigData BigData::operator/(const BigData& bigData)
 	{
 		return BigData((INT64)0);
 	}
-	//ÊıÖµ²¿·ÖÏàµÈ  Í¬ºÅ ÒìºÅ
+	//æ•°å€¼éƒ¨åˆ†ç›¸ç­‰  åŒå· å¼‚å·
 	if(strcmp(LStr+1,RStr+1) == 0)
 	{
 		if(_strData[0] == bigData._strData[0])
@@ -325,7 +323,7 @@ BigData BigData::operator/(const BigData& bigData)
 			return BigData((INT64)-1);
 		}
 	}
-	//right == +-1  ²»Òç³ö
+	//right == +-1  ä¸æº¢å‡º
 	if(!bigData.IsINT64Overflow() && (bigData._value == 1 || bigData._value == -1))
 	{
 		if(bigData._value == 1)
@@ -356,14 +354,14 @@ string BigData::ADD(string left,string right)
 	int RSize = right.size();  //        "+9999999"    8
 	string pRet;
 	char Symbol = left[0];	
-	while(LSize < RSize)//±£³Öleft×î´ó
+	while(LSize < RSize)//ä¿æŒleftæœ€å¤§
 	{
 		swap(left,right);
 		swap(LSize,RSize);
 	}
 	int cStep = 0;
 	size_t index = 0;
-	pRet.resize(LSize+1);  //¶à¿ª±ÙÒ»¸ö±£³Ö×îÖÕµÄ½øÎ»
+	pRet.resize(LSize+1);  //å¤šå¼€è¾Ÿä¸€ä¸ªä¿æŒæœ€ç»ˆçš„è¿›ä½
 	for(index=1;index<LSize;++index)
 	{
 		int num = left[LSize-index] - '0'+ cStep ;
@@ -386,15 +384,15 @@ string BigData::SUB(string left,string right)
 	//"-4235436578690864"  "+232435363"
 	int LSize = left.size();   
 	int RSize = right.size();
-	char Symbol = left[0];//·ûºÅÎ»
+	char Symbol = left[0];//ç¬¦å·ä½
 	char* c_left = (char*)left.c_str();
 	char* c_right = (char*)right.c_str();
 	int ret = strcmp(c_left,c_right);
-	if(LSize < RSize  || (LSize == RSize && ret < 0))  //±£³Öleft×î´ó
+	if(LSize < RSize  || (LSize == RSize && ret < 0))  //ä¿æŒleftæœ€å¤§
 	{
 		swap(left,right);
 		swap(LSize,RSize);
-		if(Symbol == '+')   //×ö¼õ·¨ "2"  "14444445545759909876321452"
+		if(Symbol == '+')   //åšå‡æ³• "2"  "14444445545759909876321452"
  		{
 			Symbol = '-';
 		}
@@ -414,7 +412,7 @@ string BigData::SUB(string left,string right)
 		if(num < 0)
 		{
 			num = 10 + num;
-			cStep = 1; //½èÎ»
+			cStep = 1; //å€Ÿä½
 		}
 		if(index < RSize)
 		{
@@ -445,7 +443,7 @@ string BigData::MUL(string left,string right)
 	{
 		Symbol = '-';
 	}
-	if(LSize < RSize)   //RSize-->Ğ¡
+	if(LSize < RSize)   //RSize-->å°
 	{
 		swap(left,right);
 		swap(LSize,RSize);
@@ -454,11 +452,11 @@ string BigData::MUL(string left,string right)
 	int cStep = 0;
 	pRet.resize(LSize+RSize-1,'0'); 
 	int len = pRet.size();
-	int count = 0;//´íÎ»
+	int count = 0;//é”™ä½
 	for(int i=1;i<RSize;++i)
 	{
 		int src = right[RSize-i]- '0'; 
-		int cStep = 0;//½øÎ»
+		int cStep = 0;//è¿›ä½
 		if(src == 0)
 		{
 			count++;
@@ -469,9 +467,9 @@ string BigData::MUL(string left,string right)
 			int dst = src*(left[LSize-j]-'0') + cStep;
 			dst = dst + (pRet[len-j-count] - '0');
 			pRet[len-j-count] = dst%10 + '0';
-			cStep = dst/10;//½øÎ»	
+			cStep = dst/10;//è¿›ä½	
 		}
-		pRet[len-LSize-count] += cStep ;  //Ã¿´ÎµÄ×îºóÒ»¸ö½øÎ»
+		pRet[len-LSize-count] += cStep ;  //æ¯æ¬¡çš„æœ€åä¸€ä¸ªè¿›ä½
 		count++;
 	}
 	pRet[0] = Symbol;
@@ -480,10 +478,10 @@ string BigData::MUL(string left,string right)
 
 string BigData::DIV(string left,string right)
 {
-	char Symbol = left[0];  //·ûºÅÎ»
-	int LSize = left.size()-1;  //È¥³ı·ûºÅÎ»µÄ³¤¶È
+	char Symbol = left[0];  //ç¬¦å·ä½
+	int LSize = left.size()-1;  //å»é™¤ç¬¦å·ä½çš„é•¿åº¦
 	int RSize = right.size()-1;
-	int len = RSize;  //Óë³ıÊı¸öÊıÏàÍ¬ 
+	int len = RSize;  //ä¸é™¤æ•°ä¸ªæ•°ç›¸åŒ 
 	char* pLeft = (char*)left.c_str()+1;
 	char* pRight = (char*)right.c_str()+1;
 	if(left[0] == right[0])
@@ -495,14 +493,14 @@ string BigData::DIV(string left,string right)
 		Symbol = '-';
 	}
 	string pRet;
-	pRet.append(1,Symbol); //·ÅÈë·ûºÅÎ»
+	pRet.append(1,Symbol); //æ”¾å…¥ç¬¦å·ä½
 	for(int index=RSize-1;index < LSize;)
 	{
 		if(!IsLeftBig(pLeft,len,pRight,RSize))
 		{
-			pRet.append(1,'0');    //Ğ¡ÓÚÉÌÎª0
+			pRet.append(1,'0');    //å°äºå•†ä¸º0
 			len++;
-			index++;  //¸Õ¿ªÊ¼±£³ÖÏÂ±êËùÖ¸ÔªËØµÄ¸öÊıÓëlenÏàµÈ
+			index++;  //åˆšå¼€å§‹ä¿æŒä¸‹æ ‡æ‰€æŒ‡å…ƒç´ çš„ä¸ªæ•°ä¸lenç›¸ç­‰
 			if(len + index -1 > LSize)
 			{
 				break;
@@ -519,7 +517,7 @@ string BigData::DIV(string left,string right)
 		{
 			pRet.append(1,SubLoop(pLeft,len,pRight,RSize)+ '0');
 		}
-		len++;//´ÓSubLoopº¯ÊıÖĞ³öÀ´£¬ÔòpLeft<pRight   »òÕß  *pLeft-->0  len¿ÉÄÜÎª0»òÕß±äĞ¡
+		len++;//ä»SubLoopå‡½æ•°ä¸­å‡ºæ¥ï¼Œåˆ™pLeft<pRight   æˆ–è€…  *pLeft-->0  lenå¯èƒ½ä¸º0æˆ–è€…å˜å°
 		index++;
 	}
 	return pRet;

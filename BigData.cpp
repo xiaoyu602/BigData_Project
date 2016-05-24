@@ -35,9 +35,7 @@ void Test1()
 	//BigData right("-12");
 
 	/*BigData left(9223372036854775807);
-	BigData right(12);
-	left.INT64toString();
-	right.INT64toString();*/
+	BigData right(12);*/
 
 	BigData left("1111111111111111111111111111111111111111111");
 	BigData right("999999999999999");
@@ -86,7 +84,7 @@ void Test2()
 
 void Test3()
 {
-	//Á½¸öÊı¶¼²»Òç³ö£¬Ïà³ËÎŞÒç³ö
+	//ä¸¤ä¸ªæ•°éƒ½ä¸æº¢å‡ºï¼Œç›¸ä¹˜æ— æº¢å‡º
 	/*BigData left("132425444");
 	BigData right("2442");*/
 
@@ -108,7 +106,7 @@ void Test3()
 
 void Test4()
 {
-	//Á½¸öÊı¶¼²»Òç³ö
+	//ä¸¤ä¸ªæ•°éƒ½ä¸æº¢å‡º
 	/*BigData left("222222222222");
 	BigData right("2222");*/
 
@@ -124,7 +122,7 @@ void Test4()
 	/*BigData left("2222");
 	BigData right("0");*/
 
-	//ÓĞÒ»¸öÊıÒç³ö
+	//æœ‰ä¸€ä¸ªæ•°æº¢å‡º
 	/*BigData left("0");
 	BigData right("1234569864354364547568565764325");*/
 
@@ -146,11 +144,11 @@ void Test4()
 
 	cout<<left/right<<endl;
 }
-//int main()
-//{
-//	/*Test1();*/
-//	Test2();
-//	//Test3();
-//	//Test4();
-//	return 0;
-//}
+int main()
+{
+	/*Test1();*/
+	Test2();
+	//Test3();
+	//Test4();
+	return 0;
+}
